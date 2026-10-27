@@ -1,8 +1,7 @@
 package main.java.game;
 
-import main.java.ClickHandler;
+import main.java.MouseHandler;
 import main.java.Clickable;
-import main.java.Main;
 import main.java.primitive.Drawable;
 import main.java.primitive.Grid;
 import main.java.vector.Vector2;
@@ -26,7 +25,7 @@ public class Board implements Drawable, Clickable {
         grid = new Grid(rows, rows, size, position);
         pieces = new Piece[rows][cols];
 
-        ClickHandler.getInstance().addClickable(this);
+        MouseHandler.getInstance().addClickable(this);
     }
 
     public void draw(Graphics g){
@@ -42,9 +41,8 @@ public class Board implements Drawable, Clickable {
         }
     }
 
-    public Board placePiece(Piece piece, int x, int y) {
+    public void placePiece(Piece piece, int x, int y) {
         pieces[x][y] = piece; // DESTRUCTIVE
-        return this;
     }
 
     public void onClick(float mouseX, float mouseY) {

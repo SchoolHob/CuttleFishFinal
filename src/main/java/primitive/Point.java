@@ -8,6 +8,9 @@ public class Point implements Drawable {
 
     public Vector3 position;
 
+    public Point() {
+        this(0, 0, 0);
+    }
     public Point(double x, double y, double z) {
         position = new Vector3(x, y, z);
     }
@@ -22,6 +25,7 @@ public class Point implements Drawable {
 
     @Override
     public void draw (Graphics g) {
+
         g.drawOval((int) position.x, (int) position.y, 1, 1);
     }
 }
