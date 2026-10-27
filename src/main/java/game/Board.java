@@ -8,6 +8,7 @@ import main.java.vector.Vector2;
 import main.java.vector.Vector3;
 
 import java.awt.*;
+import java.util.Optional;
 
 public class Board implements Drawable, Clickable {
     private Vector3 position;
@@ -15,6 +16,7 @@ public class Board implements Drawable, Clickable {
     private int rows, cols;
     private Grid grid;
     private Piece[][] pieces;
+    private Piece pieceInHand;
 
     public Board(Vector3 position, int size) {
         this.position = position;
@@ -23,9 +25,14 @@ public class Board implements Drawable, Clickable {
         this.cols = 8;
 
         grid = new Grid(rows, rows, size, position);
-        pieces = new Piece[rows][cols];
+        reset();
 
         MouseHandler.getInstance().addClickable(this);
+    }
+
+    public void reset() {
+        pieces = new Piece[rows][cols];
+        pieceInHand = null;
     }
 
     public void draw(Graphics g){
@@ -39,10 +46,26 @@ public class Board implements Drawable, Clickable {
 
             }
         }
+
+        if (pieceInHand != null){
+            pieceInHand.setDrawPosition(MouseHandler.getInstance().getMousePosition().add(pieceInHand.getCenterOffest()));
+            pieceInHand.draw(g);
+        }
     }
 
-    public void placePiece(Piece piece, int x, int y) {
-        pieces[x][y] = piece; // DESTRUCTIVE
+    public Piece placePiece(Piece newPiece, int x, int y) {
+        Piece potentialReplacedPiece = getPiece(x, y);
+        pieces[x][y] = newPiece; // overwrite piece
+        return potentialReplacedPiece;
+    }
+
+    public Piece getPiece(int x, int y) {
+        return pieces[x][y];
+    }
+    public Piece removePiece(int x, int y) {
+        Piece piece = getPiece(x, y);
+        pieces[x][y] = null;
+        return piece;
     }
 
     public void onClick(float mouseX, float mouseY) {
@@ -52,9 +75,12 @@ public class Board implements Drawable, Clickable {
         if (x < 0 || x >= cols || y < 0 || y >= rows) {
             return;
         }
-        if (pieces[x][y] != null) {
-            System.out.println("Piece pressed");
+        if (pieceInHand != null) {
+            pieceInHand = placePiece(pieceInHand, x, y);
+        } else if (pieces[x][y] != null) {
+            pieceInHand = removePiece(x, y);
         }
+
     }
 
 }

@@ -15,7 +15,9 @@ public class Piece implements Drawable {
     }
     public Piece setDrawPosition(Vector2 drawPosition) {this.drawPosition = drawPosition; return this;}
     public Vector2 getDrawPosition() {return drawPosition;}
+    public Vector2 getCenterOffest() { return new Vector2(size / 2, size / 2).invert(); }
     public void draw(Graphics g) {
         g.drawOval(drawPosition.intX(), drawPosition.intY(), size, size);
     }
+
 }

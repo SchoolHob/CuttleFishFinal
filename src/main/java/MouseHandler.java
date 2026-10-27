@@ -29,7 +29,9 @@ public class MouseHandler {
     }
 
     public void addClickable(Clickable clickable) {
-        clickables.add(clickable);
+        if (!clickables.contains(clickable)) {
+            clickables.add(clickable);
+        }
     }
 
     public void addClickables(Clickable ... clickables) {
@@ -54,12 +56,12 @@ public class MouseHandler {
     public void includePanel(JPanel panel) {
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {// here
+            public void mousePressed(MouseEvent e) {// here
                 float x = e.getX();
                 float y = e.getY();
 
                 notifyClickables(x, y);
-                logger.log(Level.INFO, "Click: " + x + " " + y);
+                logger.info( "Click: " + x + " " + y);
             }
 
             @Override
