@@ -1,0 +1,101 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.example'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation files('libraries/GameObserverSPI-4.7.2.jar')
+
+//    implementation 'io.github.billwrightcuprof:GameObserverSPI:4.7.1'
+    implementation 'io.github.billwrightcuprof:MazeObserver:4.7.1'
+    implementation 'io.github.billwrightcuprof:AlternateMazeObserver:4.7.1'
+    implementation 'io.github.billwrightcuprof:GameObserver:4.7.1'
+    implementation 'io.github.billwrightcuprof:AudibleGameObserver:4.7.1'
+
+    implementation 'ch.qos.logback:logback-classic:1.5.17'
+
+    // library to speak strings: Free Text-To-Speech
+    implementation 'net.sf.sociaal:freetts:1.2.2'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.platform:junit-platform-suite:1.10.0'
+
+    // BDD testing libraries
+    testImplementation 'io.cucumber:cucumber-picocontainer:7.21.1'
+    testImplementation 'io.cucumber:cucumber-java:7.21.1'
+    testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.21.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.quiet()
+}
+
+tasks.register('verifyGameObserverSpiLibs') {
+    group = 'verification'
+    description = 'Prints the IGameObserverProvider SPI registration found in jars under libs/.'
+
+    doLast {
+        File libsDir = file('libs')
+        String serviceEntry = 'META-INF/services/ooad.gameobserver.intf.IGameObserverProvider'
+
+        if (!libsDir.exists() || !libsDir.isDirectory()) {
+            throw new GradleException("libs directory not found: ${libsDir.absolutePath}")
+        }
+
+        List<File> jarFiles = fileTree(libsDir) {
+            include '*Observer*.jar'
+            include '*Maze*.jar'
+        }.files.toList().sort { it.name }
+
+        if (jarFiles.isEmpty()) {
+            throw new GradleException("No jar files found in ${libsDir.absolutePath}")
+        }
+
+        jarFiles.each { jarFile ->
+            println ""
+            println "=== ${jarFile.name} ==="
+            println "JAR: ${jarFile.absolutePath}"
+
+            def jar = new java.util.jar.JarFile(jarFile)
+            try {
+                def entry = jar.getJarEntry(serviceEntry)
+                if (entry == null) {
+                    println "  MISSING: ${serviceEntry}"
+                } else {
+                    println "  FOUND: ${serviceEntry}"
+                    String contents = jar.getInputStream(entry).getText('UTF-8').trim()
+                    println "  CONTENTS:"
+                    contents.readLines().each { line ->
+                        println "    ${line}"
+                    }
+                }
+            } finally {
+                jar.close()
+            }
+        }
+    }
+}
