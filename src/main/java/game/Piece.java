@@ -1,7 +1,7 @@
-package main.java.game;
+package game;
 
-import main.java.primitive.Drawable;
-import main.java.vector.Vector2;
+import primitive.Drawable;
+import vector.Vector2;
 
 import java.awt.*;
 

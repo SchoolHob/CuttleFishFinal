@@ -1,8 +1,8 @@
-package main.java.game;
+package game;
 
-import main.java.MouseHandler;
-import main.java.primitive.Drawable;
-import main.java.vector.IntVector2;
+import input.MouseHandler;
+import primitive.Drawable;
+import vector.IntVector2;
 
 import javax.swing.*;
 import java.awt.*;

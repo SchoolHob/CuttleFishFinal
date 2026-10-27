@@ -1,4 +1,4 @@
-package main.java.vector;
+package vector;
 
 
 public class Vector2 implements Vector<Vector2> {

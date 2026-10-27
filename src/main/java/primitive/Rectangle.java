@@ -1,8 +1,7 @@
-package main.java.primitive;
+package primitive;
 
 import java.awt.*;
-
-import main.java.vector.*;
+import vector.*;
 
 public class Rectangle implements Drawable { // extends MovingObject {  private Vector2 drawPosition{get set}; public MovingObject move(vector 3) {return piece}}
     private Vector3 position;

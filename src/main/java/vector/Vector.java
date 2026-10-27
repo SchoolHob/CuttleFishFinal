@@ -1,4 +1,4 @@
-package main.java.vector;
+package vector;
 
 public interface Vector<V extends Vector<V>> {
     V add(V other);

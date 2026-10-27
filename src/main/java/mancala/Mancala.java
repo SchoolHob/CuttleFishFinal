@@ -1,15 +1,13 @@
-package main.java.mancala;
+package mancala;
 
-import main.java.MouseHandler;
-import main.java.game.Board;
-import main.java.game.GamePanel;
-import main.java.game.IGame;
-import main.java.game.Piece;
-import main.java.primitive.Drawable;
-import main.java.primitive.Triangle;
-import main.java.primitive.Point;
-
-import main.java.vector.Vector3;
+import game.Board;
+import game.GamePanel;
+import game.IGame;
+import game.Piece;
+import primitive.Drawable;
+import primitive.Triangle;
+import primitive.Point;
+import vector.Vector3;
 
 import javax.swing.*;
 import java.awt.*;

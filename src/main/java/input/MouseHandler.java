@@ -1,14 +1,12 @@
-package main.java;
-
-import main.java.vector.Vector2;
+package input;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
+
+import vector.Vector2;
 import java.util.logging.Logger;
 
 public class MouseHandler {

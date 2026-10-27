@@ -1,11 +1,11 @@
-package main.java.primitive;
+package primitive;
 
-import main.java.vector.Vector3;
+import vector.Vector3;
 
 import java.awt.*;
 
 public class Triangle implements Drawable {
-    Vector3 a, b, c;
+    public Vector3 a, b, c;
     // Point[].
     // Move() {move points]
 
@@ -22,9 +22,9 @@ public class Triangle implements Drawable {
     }
 
     public void move(Vector3 v) {
-        a.add(v);
-        b.add(v);
-        c.add(v);
+        a = a.add(v);
+        b = b.add(v);
+        c = c.add(v);
     }
 
     @Override

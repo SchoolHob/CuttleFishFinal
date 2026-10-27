@@ -1,4 +1,6 @@
-package main.java.vector;
+package vector;
+
+import java.util.Objects;
 
 public class Vector3 implements Vector<Vector3> {
     public final double x, y, z;
@@ -63,5 +65,23 @@ public class Vector3 implements Vector<Vector3> {
     @Override
     public double dot(Vector3 other) {
         return x * other.x + y * other.y + z * other.z;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Vector3 other)) return false;
+
+        return x == other.x && y == other.y && z == other.z;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
+    }
+
+    @Override
+    public String toString() {
+        return "Vector3(" + x + ", " + y + ", " + z + ")";
     }
 }

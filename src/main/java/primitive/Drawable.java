@@ -1,4 +1,4 @@
-package main.java.primitive;
+package primitive;
 
 import java.awt.*;
 

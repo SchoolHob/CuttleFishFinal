@@ -1,8 +1,8 @@
-package main.java.primitive;
+package primitive;
 
 
-import main.java.vector.Vector2;
-import main.java.vector.Vector3;
+import vector.Vector2;
+import vector.Vector3;
 
 import java.awt.*;
 

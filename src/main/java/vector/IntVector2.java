@@ -1,4 +1,4 @@
-package main.java.vector;
+package vector;
 
 
 public class IntVector2 {

@@ -1,14 +1,13 @@
-package main.java.game;
+package game;
 
-import main.java.MouseHandler;
-import main.java.Clickable;
-import main.java.primitive.Drawable;
-import main.java.primitive.Grid;
-import main.java.vector.Vector2;
-import main.java.vector.Vector3;
+import input.Clickable;
+import input.MouseHandler;
+import primitive.Drawable;
+import primitive.Grid;
+import vector.Vector2;
+import vector.Vector3;
 
 import java.awt.*;
-import java.util.Optional;
 
 public class Board implements Drawable, Clickable {
     private Vector3 position;
