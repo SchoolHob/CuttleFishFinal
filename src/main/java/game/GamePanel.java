@@ -1,16 +1,20 @@
-package main.java;
+package main.java.game;
+
+import main.java.ClickHandler;
+import main.java.primitive.Drawable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-class GamePanel extends JPanel {
+public class GamePanel extends JPanel {
 
     private final List<Drawable> drawables = new ArrayList<>();
 
     public GamePanel() {
         this(600, 600);
+        ClickHandler.getInstance().includePanel(this);
     }
 
 
@@ -21,6 +25,11 @@ class GamePanel extends JPanel {
 
     public void include(Drawable drawable) {
         drawables.add(drawable);
+    }
+    public void include(Drawable ... drawables) {
+        for (Drawable drawable : drawables) {
+            include(drawable);
+        }
     }
 
     public void remove(Drawable drawable) {
