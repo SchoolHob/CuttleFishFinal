@@ -23,8 +23,8 @@ public class Vector2 implements Vector<Vector2> {
         return new Vector3(x, y, 0);
     }
 
-    public int intx() {return (int) Math.round(x);}
-    public int inty() {return (int) Math.round(y);}
+    public int intX() {return (int) Math.round(x);}
+    public int intY() {return (int) Math.round(y);}
 
 
     @Override

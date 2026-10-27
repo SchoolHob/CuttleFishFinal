@@ -47,7 +47,7 @@ public class Rectangle implements Drawable { // extends MovingObject {  private 
     @Override
     public void draw(Graphics g) {
 
-        g.drawRect(position.intx(), position.inty(), size.intx(), size.inty());
+        g.drawRect(position.intx(), position.inty(), size.intX(), size.intY());
     }
 
     public static void draw(Graphics g, Vector3 position, Vector2 size) {

@@ -1,5 +1,7 @@
 package main.java;
 
+import main.java.vector.Vector2;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -9,19 +11,19 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ClickHandler {
+public class MouseHandler {
     List<Clickable> clickables;
-    private static ClickHandler instance; // Potentionlly this could be a private static list of ClickHandlers and getInstance could return a specific instance based of "layers" so like one ClickHanlder for UI, one for gameplay, ect.
-    private static final Logger logger = Logger.getLogger(ClickHandler.class.getName());
+    private static MouseHandler instance; // Potentionlly this could be a private static list of ClickHandlers and getInstance could return a specific instance based of "layers" so like one ClickHanlder for UI, one for gameplay, ect.
+    private static final Logger logger = Logger.getLogger(MouseHandler.class.getName());
+    private float mouseX, mouseY;
 
-
-    private ClickHandler() {
+    private MouseHandler() {
         clickables = new ArrayList<>();
     }
 
-    public static ClickHandler getInstance() {
+    public static MouseHandler getInstance() {
         if (instance == null) {
-            instance = new ClickHandler();
+            instance = new MouseHandler();
         }
         return  instance;
     }
@@ -50,7 +52,7 @@ public class ClickHandler {
     }
 
     public void includePanel(JPanel panel) {
-        panel.addMouseListener(new MouseAdapter() {
+        MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {// here
                 float x = e.getX();
@@ -59,6 +61,20 @@ public class ClickHandler {
                 notifyClickables(x, y);
                 logger.log(Level.INFO, "Click: " + x + " " + y);
             }
-        });
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                mouseX = e.getX();
+                mouseY = e.getY();
+            }
+        };
+
+        panel.addMouseListener(mouseAdapter);
+        panel.addMouseMotionListener(mouseAdapter);
+
+    }
+
+    public Vector2 getMousePosition() {
+        return new Vector2(mouseX, mouseY);
     }
 }
