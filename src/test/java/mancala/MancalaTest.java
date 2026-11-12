@@ -1,5 +1,6 @@
 package mancala;
 
+import apps.Mancala;
 import game.Board;
 import game.IGame;
 import game.Launcher;
@@ -9,8 +10,6 @@ import primitive.Drawable;
 import primitive.Point;
 import primitive.Triangle;
 import vector.Vector3;
-
-import javax.swing.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

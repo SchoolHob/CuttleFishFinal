@@ -1,30 +1,28 @@
-package mancala;
+package apps;
 
-import game.Board;
-import game.GamePanel;
-import game.IGame;
-import game.Piece;
-import primitive.Drawable;
+import Styles.Style;
+import game.*;
 import primitive.Triangle;
-import primitive.Point;
 import vector.Vector3;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Mancala implements IGame {
-    private final GamePanel gamePanel = new GamePanel();
+    private static final Style mancalaStyle = new Style(new Color(44, 30, 35), new Color(91, 41, 61));
+
+    private final GamePanel gamePanel = new GamePanel(600, 600, mancalaStyle);
 
     Triangle triangle;
     Board board; // Step defs for this
 
     public Mancala() {
 
-        triangle = new Triangle(Vector3.at(100, 100), Vector3.at(200, 100), Vector3.at(100, 200));
+        //triangle = new Triangle(Vector3.at(100, 100), Vector3.at(200, 100), Vector3.at(100, 200));
         board = new Board(new Vector3(250, 150), 35);
         board.placePiece(new Piece(24), 4,6 );
 
-        gamePanel.include(triangle, board);
+        gamePanel.include(board);
     }
 
     public JPanel getJPanel() {

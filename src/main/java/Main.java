@@ -1,7 +1,7 @@
 
 
 import game.Launcher;
-import mancala.Mancala;
+import apps.Mancala;
 
 import java.util.logging.Logger;
 

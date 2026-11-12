@@ -1,16 +1,19 @@
 package primitive;
 
 import java.awt.*;
+
+import Styles.Style;
 import vector.*;
 
 public class Rectangle implements Drawable { // extends MovingObject {  private Vector2 drawPosition{get set}; public MovingObject move(vector 3) {return piece}}
-    private Vector3 position;
-    private Vector2 size;
+    protected Vector3 position;
+    protected Vector2 size;
 
     public Rectangle(Vector3 xyz, Vector2 wh) {
         position = xyz;
         size = wh;
     }
+
 
     public Rectangle(Vector3 xyz, double w, double h) {
         this(xyz, new Vector2(w, h));
@@ -35,6 +38,16 @@ public class Rectangle implements Drawable { // extends MovingObject {  private 
         return this;
     }
 
+    public StyledRectangle getStyledRectangle() {
+        return new StyledRectangle(this);
+    }
+
+    public StyledRectangle getStyledRectangle(Style style) {
+        return new StyledRectangle(this, style);
+    }
+
+    public Vector2 getSize() { return size; }
+
     public Vector3 getPosition() {
         return position;
     }
@@ -57,5 +70,7 @@ public class Rectangle implements Drawable { // extends MovingObject {  private 
         g.drawLine((int) (position.x + width), (int) position.y, (int) (position.x + width), (int) (position.y + height));
         g.drawLine((int) (position.x + width), (int) (position.y + height), (int) position.x, (int) (position.y + height));
         g.drawLine((int) position.x, (int) (position.y + height), (int) position.x, (int) position.y);
+
+        //g.fillRect((int) position.x, (int) position.y, (int) size.x, (int) size.y);
     }
 }

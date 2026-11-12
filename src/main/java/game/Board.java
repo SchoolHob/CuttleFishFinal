@@ -1,5 +1,8 @@
 package game;
 
+import Styles.GridStyle;
+import Styles.Style;
+import Styles.StyleBuilder;
 import input.Clickable;
 import input.MouseHandler;
 import primitive.Drawable;
@@ -17,21 +20,31 @@ public class Board implements Drawable, Clickable {
     private Piece[][] pieces;
     private Piece pieceInHand;
 
-    public Board(Vector3 position, int size) {
+
+    public Board(Vector3 position, int size, GridStyle gridStyle) {
         this.position = position;
         this.size = size;
         this.rows = 8;
         this.cols = 8;
 
         grid = new Grid(rows, rows, size, position);
+        grid.setStyle(gridStyle);
         reset();
 
         MouseHandler.getInstance().addClickable(this);
     }
 
+    public Board(Vector3 position, int size) {
+        this(position, size, new StyleBuilder().grid().buildGrid());
+    }
+
     public void reset() {
         pieces = new Piece[rows][cols];
         pieceInHand = null;
+    }
+
+    public void setGridStyle(GridStyle gridStyle) {
+        grid.setStyle(gridStyle);
     }
 
     public void draw(Graphics g){
@@ -50,6 +63,8 @@ public class Board implements Drawable, Clickable {
             pieceInHand.setDrawPosition(MouseHandler.getInstance().getMousePosition().add(pieceInHand.getCenterOffest()));
             pieceInHand.draw(g);
         }
+
+        g.drawRect(position.intx(), position.inty(), size*rows, size*cols);
     }
 
     public Piece placePiece(Piece newPiece, int x, int y) {
@@ -74,6 +89,7 @@ public class Board implements Drawable, Clickable {
         if (x < 0 || x >= cols || y < 0 || y >= rows) {
             return;
         }
+
         if (pieceInHand != null) {
             pieceInHand = placePiece(pieceInHand, x, y);
         } else if (pieces[x][y] != null) {
