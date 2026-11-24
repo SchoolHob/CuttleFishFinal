@@ -108,7 +108,8 @@ public class Board implements Drawable, Clickable {
         }
 
         if (pieceInHand != null) { // Piece IS in hand
-            if (pieceInHand.canMove(pieceInHandPos.x - x, pieceInHandPos.y - y)) {
+            if (pieceInHand.canMove(pieceInHandPos.x - x, pieceInHandPos.y - y)
+                    && pieces[x][y] == null) { // This means pieces can not move onto other pieces (only onto empty squares), this will need to be changed for capturing
                 placePieceWithHand(x, y);
             } else {
                 placePiece(pieceInHand, pieceInHandPos.x, pieceInHandPos.y);
