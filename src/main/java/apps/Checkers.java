@@ -22,7 +22,6 @@ public class Checkers implements IGame {
     private final GamePanel gamePanel = new GamePanel(600, 600, CHECKERS_STYLE);
 
     private Board board;
-    private Style p1Style, p2Style;
 
 
     public Checkers() {
@@ -37,23 +36,14 @@ public class Checkers implements IGame {
                         .outline(Color.BLACK)
                         .build());
 
-        p1Style = Style.builder()
-                .fill(new Color(190, 32, 32))
-                .outline(new Color(70, 9, 9))
-                .build();
-        p2Style = Style.builder()
-                .fill(new Color(16, 15, 15))
-                .outline(new Color(25, 25, 30))
-                .build();
-
         // Place pieces on board
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
                 if ((r + c) % 2 != 0) {
                     if (r < 3) {
-                        board.placePiece(new Piece(24, p1Style), c, r);
+                        board.placePiece(new CheckerPiece(true), c, r);
                     } else if (r >= 5) {
-                        board.placePiece(new Piece(24, p2Style), c, r);
+                        board.placePiece(new CheckerPiece(false), c, r);
                     }
                 }
             }
@@ -62,13 +52,40 @@ public class Checkers implements IGame {
         gamePanel.include(board, title);
     }
 
-    @Override
-    public void update() {
+    protected class CheckerPiece extends Piece {
+        public static final Style RED = Style.builder()
+                .fill(new Color(190, 32, 32))
+                .outline(new Color(70, 9, 9))
+                .build();
+        public static final Style BLACK = Style.builder()
+                .fill(new Color(16, 15, 15))
+                .outline(new Color(25, 25, 30))
+                .build();
 
+        private boolean isRed;
+
+        public CheckerPiece(boolean isRed) {
+            super(24, isRed ? RED : BLACK);
+            this.isRed = isRed;
+        }
+
+        @Override
+        public boolean canMove(int deltaX, int deltaY) {
+            if (deltaX == 0 && deltaY == 0) {return true;}
+            int direction = isRed ? -1 : 1;
+
+            return Math.abs(deltaX) == 1 && deltaY == direction;
+        }
     }
 
     @Override
     public JPanel getJPanel() {
         return gamePanel;
     }
+
+    @Override
+    public void update() {
+
+    }
+
 }

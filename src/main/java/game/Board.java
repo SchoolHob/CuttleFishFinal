@@ -20,6 +20,7 @@ public class Board implements Drawable, Clickable {
     private Grid grid;
     private Piece[][] pieces;
     private Piece pieceInHand;
+    private IntVector2 pieceInHandPos;
 
 
     public Board(int rows, int cols, Vector3 position, int size, GridStyle gridStyle) {
@@ -88,6 +89,16 @@ public class Board implements Drawable, Clickable {
         return piece;
     }
 
+    public void pickUpPiece(int x, int y) {
+        pieceInHand = removePiece(x, y);
+        pieceInHandPos = new IntVector2(x, y);
+    }
+    public void placePieceWithHand(int x, int y) {
+        //placePiece returns null if there is no piece on the square OR returns the piece on that square
+        pieceInHand = placePiece(pieceInHand, x, y);
+        pieceInHandPos = new IntVector2(x, y);
+    }
+
     public void onClick(float mouseX, float mouseY) {
         int x = (int) ((mouseX - position.x) / size);
         int y = (int) ((mouseY - position.y) / size);
@@ -96,11 +107,16 @@ public class Board implements Drawable, Clickable {
             return;
         }
 
-        if (pieceInHand != null) {
-            //placePiece returns null if there is no piece on the square OR returns the piece on that square
-            pieceInHand = placePiece(pieceInHand, x, y);
+        if (pieceInHand != null) { // Piece IS in hand
+            if (pieceInHand.canMove(pieceInHandPos.x - x, pieceInHandPos.y - y)) {
+                placePieceWithHand(x, y);
+            } else {
+                placePiece(pieceInHand, pieceInHandPos.x, pieceInHandPos.y);
+                pieceInHand = null;
+            }
         } else if (pieces[x][y] != null) {
-            pieceInHand = removePiece(x, y);
+            pickUpPiece(x, y);
+
         }
 
     }
