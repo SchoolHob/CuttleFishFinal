@@ -1,7 +1,7 @@
 
 
+import apps.*;
 import game.Launcher;
-import apps.Mancala;
 
 import java.util.logging.Logger;
 
@@ -9,6 +9,6 @@ public class Main {
     static Logger logger = Logger.getLogger(Main.class.getName());
 
     void main() {
-        Launcher.launchGame(new Mancala());
+        Launcher.launchGame(new Checkers());
     }
 }

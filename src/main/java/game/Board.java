@@ -2,17 +2,18 @@ package game;
 
 import Styles.GridStyle;
 import Styles.Style;
-import Styles.StyleBuilder;
 import input.Clickable;
 import input.MouseHandler;
 import primitive.Drawable;
 import primitive.Grid;
+import vector.IntVector2;
 import vector.Vector2;
 import vector.Vector3;
 
 import java.awt.*;
 
 public class Board implements Drawable, Clickable {
+    private static final IntVector2 DEFAULT_ROWS_COLS = new IntVector2(8, 8);
     private Vector3 position;
     private int size;
     private int rows, cols;
@@ -21,11 +22,11 @@ public class Board implements Drawable, Clickable {
     private Piece pieceInHand;
 
 
-    public Board(Vector3 position, int size, GridStyle gridStyle) {
+    public Board(int rows, int cols, Vector3 position, int size, GridStyle gridStyle) {
         this.position = position;
         this.size = size;
-        this.rows = 8;
-        this.cols = 8;
+        this.rows = rows;
+        this.cols = cols;
 
         grid = new Grid(rows, rows, size, position);
         grid.setStyle(gridStyle);
@@ -34,8 +35,12 @@ public class Board implements Drawable, Clickable {
         MouseHandler.getInstance().addClickable(this);
     }
 
+    public Board(Vector3 position, int size, GridStyle gridStyle) {
+        this(DEFAULT_ROWS_COLS.x, DEFAULT_ROWS_COLS.y, position, size, gridStyle);
+    }
+
     public Board(Vector3 position, int size) {
-        this(position, size, new StyleBuilder().grid().buildGrid());
+        this(position, size, GridStyle.builder().build());
     }
 
     public void reset() {
@@ -64,7 +69,8 @@ public class Board implements Drawable, Clickable {
             pieceInHand.draw(g);
         }
 
-        g.drawRect(position.intx(), position.inty(), size*rows, size*cols);
+        //g.drawRect(position.intx(), position.inty(), size*rows, size*cols);
+        // ^^^ Grid already draws this ^^^
     }
 
     public Piece placePiece(Piece newPiece, int x, int y) {
@@ -91,11 +97,14 @@ public class Board implements Drawable, Clickable {
         }
 
         if (pieceInHand != null) {
+            //placePiece returns null if there is no piece on the square OR returns the piece on that square
             pieceInHand = placePiece(pieceInHand, x, y);
         } else if (pieces[x][y] != null) {
             pieceInHand = removePiece(x, y);
         }
 
     }
+
+
 
 }

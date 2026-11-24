@@ -16,6 +16,7 @@ public class PlayerSettings implements IGame {
 
     @Override
     public JPanel getJPanel() {
+
         return null;
     }
 }

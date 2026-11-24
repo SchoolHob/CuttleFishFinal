@@ -3,26 +3,64 @@ package Styles;
 import java.awt.*;
 
 public class GridStyle extends Style {
-    private Color secondaryFill;
-    private boolean cellsHaveOutlines;
+    protected Color secondaryFill;
+    protected boolean cellsHaveOutlines;
 
-    public GridStyle(Color fill, Color outline) {
+    protected GridStyle(Color fill, Color secondaryFill, Color outline, boolean cellsHaveOutlines) {
         super(fill, outline);
-        cellsHaveOutlines = true;
-    }
-    public GridStyle(Color fill, Color secondaryFill, Color outline) {
-        super(fill, outline);
-        cellsHaveOutlines = false;
-    }
-    public void setCellsHaveOutlines(boolean cellsHaveOutlines) {
+        this.secondaryFill = secondaryFill;
         this.cellsHaveOutlines = cellsHaveOutlines;
     }
+
     public boolean cellsHaveOutlines() {
         return cellsHaveOutlines;
     }
-    public void setSecondaryFill(Color fill) {
-        secondaryFill = fill;
-    }
+
     public Color getSecondaryFill() { return secondaryFill; }
+
+    public static GridStyleBuilder builder() {
+        return new GridStyleBuilder();
+    }
+
+    public static class GridStyleBuilder extends StyleBuilder {
+
+        private Color secondaryFill;
+        private boolean cellsHaveOutlines;
+        protected GridStyleBuilder() {
+            super();
+            secondaryFill = this.fill;
+            cellsHaveOutlines = true;
+        }
+
+        public GridStyleBuilder secondaryFill(Color fill) {
+            this.secondaryFill = fill;
+            cellsHaveOutlines = false;
+            return this;
+        }
+
+        public GridStyleBuilder cellsHaveOutlines(boolean cellsHaveOutlines) {
+            this.cellsHaveOutlines = cellsHaveOutlines;
+            return this;
+        }
+
+        @Override
+        public GridStyleBuilder fill(Color fill) {
+            super.fill(fill);
+            return this;
+        }
+
+        @Override
+        public GridStyleBuilder outline(Color outline) {
+            super.outline(outline);
+            return this;
+        }
+
+        @Override
+        public GridStyle build() {
+            return new GridStyle(fill, secondaryFill, outline, cellsHaveOutlines);
+        }
+
+
+    }
 
 }

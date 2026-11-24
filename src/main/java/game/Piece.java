@@ -25,8 +25,13 @@ public class Piece implements Drawable {
     public void draw(Graphics g) {
         style.fill(g);
         g.fillOval(drawPosition.intX(), drawPosition.intY(), size, size);
+
         style.outline(g);
         g.drawOval(drawPosition.intX(), drawPosition.intY(), size, size);
+    }
+
+    public boolean canMove(int deltaX, int deltaY) { // Pass in the relative change of piece position and return true if the move is valid for the piece
+        return true;
     }
 
 }

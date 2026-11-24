@@ -14,7 +14,7 @@ public class Launcher {
     public static void launchGame(IGame game) {
         openGameWindow(game);
 
-        Timer timer = new Timer(16, event -> {
+        Timer timer = new Timer(1, event -> {
             game.draw();
             game.update();
         });

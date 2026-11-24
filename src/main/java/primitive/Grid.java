@@ -8,7 +8,7 @@ import vector.Vector3;
 import java.awt.*;
 
 public class Grid extends Rectangle {
-    private static final GridStyle DEFAULT_STYLE = new GridStyle(Color.BLACK, Color.WHITE);
+    private static final GridStyle DEFAULT_STYLE = GridStyle.builder().fill(Color.BLACK).outline(Color.WHITE).build();
 
     private int rows, cols;
     private int cellsize;
@@ -26,7 +26,7 @@ public class Grid extends Rectangle {
     }
 
     public void setStyle(GridStyle gridStyle) {
-        gridStyle = gridStyle;
+        this.gridStyle = gridStyle;
     }
 
 
@@ -37,12 +37,14 @@ public class Grid extends Rectangle {
                 g.setColor((r + c) % 2 == 0 ? gridStyle.getFill() : gridStyle.getSecondaryFill());
                 if (gridStyle.cellsHaveOutlines()) {
                     g.fillRect(r * cellsize + getPosition().intx(), c * cellsize + getPosition().inty(), cellsize, cellsize);
-                    g.setColor(gridStyle.getOutline());
+                    gridStyle.outline(g);
                     g.drawRect(r * cellsize + getPosition().intx(), c * cellsize + getPosition().inty(), cellsize, cellsize);
                 } else {
                     g.fillRect(r * cellsize + getPosition().intx(), c * cellsize + getPosition().inty(), cellsize, cellsize);
                 }
             }
         }
+        gridStyle.outline(g);
+        g.drawRect(getPosition().intx(), getPosition().inty(),cellsize*cols, cellsize*rows);
     }
 }
