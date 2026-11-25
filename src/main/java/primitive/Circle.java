@@ -56,6 +56,13 @@ public class Circle implements Drawable {
         position = position.add(v);
     }
 
+    public boolean contains(double x, double y) {
+        double dx = (x - position.x) / (size.x / 2.0);
+        double dy = (y - position.y) / (size.y / 2.0);
+
+        return dx * dx + dy * dy <= 1.0;
+    }
+
     @Override
     public void draw(Graphics g) {
         draw(g, position, size);

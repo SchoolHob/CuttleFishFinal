@@ -9,6 +9,6 @@ public class Main {
     static Logger logger = Logger.getLogger(Main.class.getName());
 
     void main() {
-        Launcher.launchGame(new Checkers());
+        Launcher.launchGame(new Mancala());
     }
 }

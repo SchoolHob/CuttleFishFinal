@@ -20,6 +20,10 @@ public class Vector3 implements Vector<Vector3> {
     public static Vector3 at(int x, int y, int z) { return at((double)x, (double)y, (double)z);}
     public static Vector3 at(int x, int y) { return at((double)x, (double)y);}
 
+    public Vector2 toVector2() {
+        return new Vector2(x, y);
+    }
+
     public int intx() {return (int) Math.round(x);}
     public int inty() {return (int) Math.round(y);}
     public int intz() {return (int) Math.round(z);}
@@ -73,6 +77,24 @@ public class Vector3 implements Vector<Vector3> {
         if (!(obj instanceof Vector3 other)) return false;
 
         return x == other.x && y == other.y && z == other.z;
+    }
+
+    public Vector3 randomOffset(double radius) {
+        double angle = Math.random() * 2 * Math.PI;
+        double distance = radius * Math.sqrt(Math.random());
+
+        return add(Vector3.at(Math.cos(angle) * distance, Math.sin(angle) * distance));
+    }
+
+    public Vector3 weightedRandomOffset(double radius, double weight) {
+        double angle = Math.random() * 2 * Math.PI;
+        double distance = radius * Math.pow(Math.random(), weight);
+
+        return Vector3.at(
+                x + Math.cos(angle) * distance,
+                y + Math.sin(angle) * distance,
+                z
+        );
     }
 
     @Override

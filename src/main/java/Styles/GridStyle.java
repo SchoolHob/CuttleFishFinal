@@ -16,6 +16,9 @@ public class GridStyle extends Style {
         return cellsHaveOutlines;
     }
 
+    public void secondaryFill(Graphics g) {
+        g.setColor(secondaryFill);
+    }
     public Color getSecondaryFill() { return secondaryFill; }
 
     public static GridStyleBuilder builder() {
