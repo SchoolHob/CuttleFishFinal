@@ -6,22 +6,18 @@ import input.Clickable;
 import input.MouseHandler;
 import primitive.Circle;
 import primitive.Drawable;
-import vector.Vector2;
 import vector.Vector3;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.util.List;
 import java.util.ArrayList;
 
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MancalaBoard implements Drawable, Clickable {
     static Logger logger = Logger.getLogger(MancalaBoard.class.getName());
 
-    private IMancala gameState;
+    private IGame gameState;
     private Vector3 position;
     private int width, height;
     private int pitSize;
@@ -37,7 +33,7 @@ public class MancalaBoard implements Drawable, Clickable {
     private int nextPitIndex;
 
 
-    public MancalaBoard(IMancala game, Vector3 position, int size, GridStyle boardStyle) {
+    public MancalaBoard(IGame game, Vector3 position, int size, GridStyle boardStyle) {
         this.gameState = game;
         this.pitSize = size;
         this.position = position;

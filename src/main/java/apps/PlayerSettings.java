@@ -1,12 +1,11 @@
 package apps;
 
 import game.GamePanel;
-import game.IGame;
+import game.IApp;
 
 import javax.swing.*;
-import java.io.Serializable;
 
-public class PlayerSettings implements IGame {
+public class PlayerSettings implements IApp {
     private final GamePanel gamePanel = new GamePanel();
 
     @Override

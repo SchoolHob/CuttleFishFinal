@@ -2,7 +2,7 @@ package mancala;
 
 import apps.Mancala;
 import game.Board;
-import game.IGame;
+import game.IApp;
 import game.Launcher;
 import input.Clickable;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ public class MancalaTest {
 
     @Test
     public void mancalaIsIGame(){
-        assert (mancala instanceof IGame);
+        assert (mancala instanceof IApp);
     }
 
 }

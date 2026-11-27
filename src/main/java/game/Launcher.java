@@ -11,7 +11,7 @@ public class Launcher {
     static final IntVector2 WINDOW_SIZE = new IntVector2(800, 600);
 
 
-    public static void launchGame(IGame game) {
+    public static void launchGame(IApp game) {
         openGameWindow(game);
 
         Timer timer = new Timer(1, event -> {
@@ -22,7 +22,7 @@ public class Launcher {
         timer.start();
     }
 
-    public static JFrame openGameWindow(IGame game, int width, int height) {
+    public static JFrame openGameWindow(IApp game, int width, int height) {
         JFrame window = new JFrame("Cuttlefish Games");
         window.setSize(width, height);
         window.setLocationRelativeTo(null); // center on screen
@@ -37,7 +37,7 @@ public class Launcher {
         return window;
     }
 
-    public static JFrame openGameWindow(IGame game) {
+    public static JFrame openGameWindow(IApp game) {
         return openGameWindow(game, WINDOW_SIZE.x, WINDOW_SIZE.y);
     }
 

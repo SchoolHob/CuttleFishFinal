@@ -4,7 +4,7 @@ import Styles.GridStyle;
 import Styles.Style;
 import game.Board;
 import game.GamePanel;
-import game.IGame;
+import game.IApp;
 import game.Piece;
 import primitive.Text;
 import vector.Vector2;
@@ -13,7 +13,7 @@ import vector.Vector3;
 import javax.swing.*;
 import java.awt.*;
 
-public class Checkers implements IGame {
+public class Checkers implements IApp {
     private static final Style CHECKERS_STYLE = Style.builder()
             .fill(new Color(44, 30, 35)) // Game Backgorund
             .outline(new Color(157, 95, 57)) // Game Outline

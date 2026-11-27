@@ -3,13 +3,12 @@ package apps;
 import Styles.GridStyle;
 import Styles.Style;
 import game.*;
-import primitive.Triangle;
 import vector.Vector3;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Mancala implements IGame, IMancala {
+public class Mancala implements IApp, IGame {
     private static final Style mancalaStyle = Style.builder()
             .fill(new Color(25, 40, 35))
             .outline(new Color(48, 91, 41)).build();

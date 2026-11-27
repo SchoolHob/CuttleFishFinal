@@ -1,11 +1,8 @@
 package game;
 
-import javax.swing.*;
-
 public interface IGame {
-    void update();
-    default void draw(){
-        getJPanel().repaint();
-    }
-    JPanel getJPanel();
+    Player getPlayer1();
+    Player getPlayer2();
+    Player getCurrentPlayer();
+    void nextTurn();
 }
