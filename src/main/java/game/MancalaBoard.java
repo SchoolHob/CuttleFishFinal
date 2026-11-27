@@ -95,14 +95,14 @@ public class MancalaBoard implements Drawable, Clickable {
 
     public Piece dropNextMarbleFromHand() {
         Piece marble = marblesInHand.getLast();
-        marblesInHand.remove(marble);
+        marblesInHand.removeLast();
         return marble;
     }
 
     public boolean selectPit(int index){
 
         if (marblesInHand.isEmpty()) {
-            if (isPit(index)) {
+            if (isPitOnCurrentPlayersSide(index)) {
                 // Pick up all marbles from pit
                 marblesInHand = pickupMarblesFromPit(index);
                 nextPitIndex = index;
@@ -110,12 +110,21 @@ public class MancalaBoard implements Drawable, Clickable {
                 return true;
             }
 
-            logger.log(Level.WARNING, "Pit " + index + " selected, cannot pickup from a store.");
+            logger.log(Level.WARNING, "Pit " + index + " selected, cannot pickup from a store or opponent side.");
             return false;
         }
 
         // Marbles ARE in hand:
         if (index != nextPitIndex) {
+            if (index == nextPitIndex-1 && marbles[index].isEmpty()) {
+                // Cancel move (Go again, select another pit)
+                int handSize = marblesInHand.size();
+                for (int i = 0; i < handSize; i++) {
+                    marbles[index].add(dropNextMarbleFromHand());
+                }
+
+                return true;
+            }
             logger.log(Level.WARNING, "Pit " + index + " selected, cannot drop in non sequential order, the next pit was: " + nextPitIndex);
             return false;
         }
@@ -130,14 +139,16 @@ public class MancalaBoard implements Drawable, Clickable {
                 placePiece(dropNextMarbleFromHand(), index);
                 return true;
             }
-            if (isPitOnCurrentPlayersSide(index) && marbles[index].isEmpty()) {
-                placePiece(dropNextMarbleFromHand(), getCurrentPlayersStoreIndex());
+            if (isPitOnCurrentPlayersSide(index) && marbles[index].isEmpty() && !marbles[getOppositePitIndex(index)].isEmpty()) {
+                // Capture
 
                 int oppositePitIndex = getOppositePitIndex(index);
                 int currentPlayerStoreIndex = getCurrentPlayersStoreIndex();
                 for (Piece marble : pickupMarblesFromPit(oppositePitIndex)) {
                     placePiece(marble, currentPlayerStoreIndex);
                 }
+                placePiece(dropNextMarbleFromHand(), getCurrentPlayersStoreIndex());
+
                 return true;
             }
 
@@ -180,7 +191,7 @@ public class MancalaBoard implements Drawable, Clickable {
 
     private boolean isPitOnCurrentPlayersSide(int index){
         if (gameState.getCurrentPlayer() == gameState.getPlayer1()) {
-            return index > 0 && index < P1_STORE_INDEX;
+            return index >= 0 && index < P1_STORE_INDEX;
         } else if (gameState.getCurrentPlayer() == gameState.getPlayer2()) {
             return index > P1_STORE_INDEX && index < P2_STORE_INDEX;
         }
@@ -202,16 +213,18 @@ public class MancalaBoard implements Drawable, Clickable {
         for (int i = 0; i < 14; i++) {
             marbles[i] = new ArrayList<>();
             if (i < P1_STORE_INDEX) {
-                pitsAndStores[i] = new Circle(Vector3.at(x + i*pitSize + i* MARGIN, y + pitSize/2.0 + MARGIN /2.0), pitSize, pitSize);
+                pitsAndStores[i] = new Circle(Vector3.at(x + i*pitSize + i* MARGIN, y + pitSize/2.0 + MARGIN /2.0), pitSize, pitSize)
+                        .getStyledCircle(Style.builder().fill(boardStyle.getFill()).outline(boardStyle.getOutline()).build());
             } else if (i == P1_STORE_INDEX) {
-                pitsAndStores[i] = new Circle(Vector3.at(x + i*pitSize + i* MARGIN, y), pitSize, pitSize*2 + MARGIN *2);
+                pitsAndStores[i] = new Circle(Vector3.at(x + i*pitSize + i* MARGIN, y), pitSize, pitSize*2 + MARGIN *2)
+                        .getStyledCircle(Style.builder().fill(boardStyle.getFill()).outline(gameState.getPlayer1().getStyle().getOutline().darker().darker()).build());
             } else if (i < P2_STORE_INDEX) {
-                pitsAndStores[i] = new Circle(Vector3.at(x + (P2_STORE_INDEX-i-1)*pitSize + (P2_STORE_INDEX-i-1)* MARGIN, y - pitSize/2.0 - MARGIN /2.0), pitSize, pitSize);
+                pitsAndStores[i] = new Circle(Vector3.at(x + (P2_STORE_INDEX-i-1)*pitSize + (P2_STORE_INDEX-i-1)* MARGIN, y - pitSize/2.0 - MARGIN /2.0), pitSize, pitSize)
+                        .getStyledCircle(Style.builder().fill(boardStyle.getFill()).outline(boardStyle.getOutline()).build());
             } else if (i == P2_STORE_INDEX) {
-                pitsAndStores[i] = new Circle(Vector3.at(x - pitSize - MARGIN, y), pitSize, pitSize * 2 + MARGIN * 2);
+                pitsAndStores[i] = new Circle(Vector3.at(x - pitSize - MARGIN, y), pitSize, pitSize * 2 + MARGIN * 2)
+                        .getStyledCircle(Style.builder().fill(boardStyle.getFill()).outline(gameState.getPlayer2().getStyle().getOutline().darker().darker()).build());
             }
-
-            pitsAndStores[i] = pitsAndStores[i].getStyledCircle(Style.builder().fill(boardStyle.getFill()).outline(boardStyle.getOutline()).build());
         }
     }
 

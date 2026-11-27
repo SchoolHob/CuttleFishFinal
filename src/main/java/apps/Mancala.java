@@ -22,7 +22,9 @@ public class Mancala implements IGame, IMancala {
     private Player player1, player2;
     private boolean isPlayerOneTurn;
 
-    public Mancala() {
+    public Mancala() { // Players will be inputed here
+        initializePlayerData();
+
         board = new MancalaBoard(this, Vector3.at(130, 200), 60, GridStyle.builder()
                 .fill(new Color(82, 55, 41))
                 .secondaryFill(new Color(119, 70, 43))
@@ -30,21 +32,6 @@ public class Mancala implements IGame, IMancala {
                 .build());
 
         populateBoard(board);
-
-        player1 = new Player("John", Style.builder()
-                .fill(new Color(82, 155, 41))
-                .brightOutline().build());
-        player2 = new Player("Mike", Style.builder()
-                .fill(new Color(152, 65, 131))
-                .brightOutline()
-                .build());
-
-        player1.setIconPosition(Vector3.at(10, 10));
-        player2.setIconPosition(Vector3.at(25, 10));
-
-        isPlayerOneTurn = true;
-        player1.setFocus(isPlayerOneTurn);
-        player2.setFocus(!isPlayerOneTurn);
 
         gamePanel.include(board, player1, player2);
     }
@@ -84,6 +71,26 @@ public class Mancala implements IGame, IMancala {
                 .fill(fill)
                 .outline(fill.darker())
                 .build());
+    }
+
+    public void initializePlayerData() {
+        player1 = new Player("John", Style.builder()
+                .fill(new Color(82, 155, 41))
+                .brightOutline().build());
+        player2 = new Player("Mike", Style.builder()
+                .fill(new Color(152, 65, 131))
+                .brightOutline()
+                .build());
+
+        player1.setIconPosition(Vector3.at(15, 15));
+        player2.setIconPosition(Vector3.at(15, 45));
+        player1.setIconSize(20);
+        player2.setIconSize(20);
+
+        isPlayerOneTurn = true;
+        player1.setFocus(isPlayerOneTurn);
+        player2.setFocus(!isPlayerOneTurn);
+
     }
 
 
