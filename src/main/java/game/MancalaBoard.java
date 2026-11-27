@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 public class MancalaBoard implements Drawable, Clickable {
     static Logger logger = Logger.getLogger(MancalaBoard.class.getName());
 
+    private IMancala gameState;
     private Vector3 position;
     private int width, height;
     private int pitSize;
@@ -32,34 +33,24 @@ public class MancalaBoard implements Drawable, Clickable {
     private GridStyle boardStyle;
 
     private ArrayList<Piece>[] marbles = new ArrayList[14];
-    private ArrayList<Piece> marblesInHand = new ArrayList<>();
+    private ArrayList<Piece> marblesInHand;
+    private int nextPitIndex;
 
 
-    public MancalaBoard(Vector3 position, int size, GridStyle boardStyle) {
-        pitSize = size;
+    public MancalaBoard(IMancala game, Vector3 position, int size, GridStyle boardStyle) {
+        this.gameState = game;
+        this.pitSize = size;
         this.position = position;
         this.boardStyle = boardStyle;
 
-        double x = position.x + pitSize * 1.5 + MARGIN*2;
-        double y = position.y + pitSize + MARGIN*2;
+        initializePitsAndStores();
 
-        for (int i = 0; i < 14; i++) {
-            marbles[i] = new ArrayList<>();
-            if (i < P1_STORE_INDEX) {
-                pitsAndStores[i] = new Circle(Vector3.at(x + i*pitSize + i* MARGIN, y - pitSize/2.0 - MARGIN /2.0), pitSize, pitSize);
-            } else if (i == P1_STORE_INDEX) {
-                pitsAndStores[i] = new Circle(Vector3.at(x + i*pitSize + i* MARGIN, y), pitSize, pitSize*2 + MARGIN *2);
-            } else if (i < P2_STORE_INDEX) {
-                pitsAndStores[i] = new Circle(Vector3.at(x + (P2_STORE_INDEX-i-1)*pitSize + (P2_STORE_INDEX-i-1)* MARGIN, y + pitSize/2.0 + MARGIN /2.0), pitSize, pitSize);
-            } else if (i == P2_STORE_INDEX) {
-                pitsAndStores[i] = new Circle(Vector3.at(x - pitSize - MARGIN, y), pitSize, pitSize * 2 + MARGIN * 2);
-            }
+        this.width = 8 * pitSize + 9 * MARGIN;
+        this.height = 2 * pitSize + 2 * MARGIN*2;
 
-            pitsAndStores[i] = pitsAndStores[i].getStyledCircle(Style.builder().fill(boardStyle.getFill()).outline(boardStyle.getOutline()).build());
-        }
+        this.marblesInHand = new ArrayList<>();
+        this.nextPitIndex = -1;
 
-        width = 8 * pitSize + 9 * MARGIN;
-        height = 2 * pitSize + 2 * MARGIN*2;
 
         MouseHandler.getInstance().addClickable(this);
     }
@@ -69,12 +60,19 @@ public class MancalaBoard implements Drawable, Clickable {
             throw new IndexOutOfBoundsException("Invalid index");
         }
 
+        marbles[index].add(piece);
+        if (index == P1_STORE_INDEX) {
+            gameState.getPlayer1().givePoints(1);
+        } else if (index == P2_STORE_INDEX) {
+            gameState.getPlayer2().givePoints(1);
+        }
+
         piece.setDrawPosition(
                 Vector3.ZERO
                         .weightedRandomOffset((pitsAndStores[index].getSize().x - piece.getSize()) / 2.0, 1.0)
                         .toVector2()
                         .add(piece.getCenterOffest()));
-        marbles[index].add(piece);
+
 
     }
 
@@ -85,10 +83,11 @@ public class MancalaBoard implements Drawable, Clickable {
         return marbles[P2_STORE_INDEX].size();
     }
 
-    public ArrayList<Piece> pickUpFromPit(int index) {
-//        if (index == P1_STORE_INDEX || index == P2_STORE_INDEX) {
-//            throw new IndexOutOfBoundsException("Invalid index: " + index + " is a player store.");
-//        }
+    public ArrayList<Piece> pickupMarblesFromPit(int index) {
+        if (!isPit(index)) {
+            logger.log(Level.WARNING, "Cannnot pickup from a store");
+            return new ArrayList<>();
+        }
         ArrayList<Piece> marblesFromPit = marbles[index];
         marbles[index] = new ArrayList<>();
         return marblesFromPit;
@@ -100,22 +99,131 @@ public class MancalaBoard implements Drawable, Clickable {
         return marble;
     }
 
-    public void pitClicked(int index){
+    public boolean selectPit(int index){
 
         if (marblesInHand.isEmpty()) {
-            marblesInHand = pickUpFromPit(index);
-        } else {
-            placePiece(dropNextMarbleFromHand(), index);
+            if (isPit(index)) {
+                // Pick up all marbles from pit
+                marblesInHand = pickupMarblesFromPit(index);
+                nextPitIndex = index;
+                incrementNextPitIndex();
+                return true;
+            }
+
+            logger.log(Level.WARNING, "Pit " + index + " selected, cannot pickup from a store.");
+            return false;
         }
 
-        logger.log(Level.INFO, "Pit " + index + " clicked");
+        // Marbles ARE in hand:
+        if (index != nextPitIndex) {
+            logger.log(Level.WARNING, "Pit " + index + " selected, cannot drop in non sequential order, the next pit was: " + nextPitIndex);
+            return false;
+        }
+        if (isOpposingPlayersStore(index)) {
+            logger.log(Level.WARNING, "Pit " + index + " selected, cannot drop marbles in other players store.");
+            return false;
+        }
+
+        if (marblesInHand.size() == 1) {
+            if (isCurrentPlayersStore(index)) {
+                // EXTRA TURN
+                placePiece(dropNextMarbleFromHand(), index);
+                return true;
+            }
+            if (isPitOnCurrentPlayersSide(index) && marbles[index].isEmpty()) {
+                placePiece(dropNextMarbleFromHand(), getCurrentPlayersStoreIndex());
+
+                int oppositePitIndex = getOppositePitIndex(index);
+                int currentPlayerStoreIndex = getCurrentPlayersStoreIndex();
+                for (Piece marble : pickupMarblesFromPit(oppositePitIndex)) {
+                    placePiece(marble, currentPlayerStoreIndex);
+                }
+                return true;
+            }
+
+            placePiece(dropNextMarbleFromHand(), index);
+            gameState.nextTurn();
+            return true;
+        }
+
+        placePiece(dropNextMarbleFromHand(), index);
+        incrementNextPitIndex();
+        return true;
+    }
+
+    private void incrementNextPitIndex() {
+        nextPitIndex++;
+        if (nextPitIndex >= pitsAndStores.length) {
+            nextPitIndex = 0;
+        }
+        if (isOpposingPlayersStore(nextPitIndex)) {
+            incrementNextPitIndex();
+        }
+    }
+
+    private boolean isOpposingPlayersStore(int index) {
+        return (gameState.getCurrentPlayer() == gameState.getPlayer1() && index == P2_STORE_INDEX) || (gameState.getCurrentPlayer() == gameState.getPlayer2() && index == P1_STORE_INDEX);
+    }
+    private boolean isCurrentPlayersStore(int index) {
+        return (gameState.getCurrentPlayer() == gameState.getPlayer1() && index == P1_STORE_INDEX) || (gameState.getCurrentPlayer() == gameState.getPlayer2() && index == P2_STORE_INDEX);
+    }
+    private int getCurrentPlayersStoreIndex() {
+        if (gameState.getCurrentPlayer() == gameState.getPlayer1() ) {
+            return P1_STORE_INDEX;
+        }
+        if (gameState.getCurrentPlayer() == gameState.getPlayer2() ) {
+            return P2_STORE_INDEX;
+        }
+        // Something went wrong with gameState if we get here
+        return -1;
+    }
+
+    private boolean isPitOnCurrentPlayersSide(int index){
+        if (gameState.getCurrentPlayer() == gameState.getPlayer1()) {
+            return index > 0 && index < P1_STORE_INDEX;
+        } else if (gameState.getCurrentPlayer() == gameState.getPlayer2()) {
+            return index > P1_STORE_INDEX && index < P2_STORE_INDEX;
+        }
+        return false;
+    }
+
+    private int getOppositePitIndex(int index){
+        return 12 - index;
+    }
+
+    private boolean isPit(int index){
+        return index != P1_STORE_INDEX && index != P2_STORE_INDEX;
+    }
+
+    private void initializePitsAndStores() {
+        double x = position.x + pitSize * 1.5 + MARGIN*2;
+        double y = position.y + pitSize + MARGIN*2;
+
+        for (int i = 0; i < 14; i++) {
+            marbles[i] = new ArrayList<>();
+            if (i < P1_STORE_INDEX) {
+                pitsAndStores[i] = new Circle(Vector3.at(x + i*pitSize + i* MARGIN, y + pitSize/2.0 + MARGIN /2.0), pitSize, pitSize);
+            } else if (i == P1_STORE_INDEX) {
+                pitsAndStores[i] = new Circle(Vector3.at(x + i*pitSize + i* MARGIN, y), pitSize, pitSize*2 + MARGIN *2);
+            } else if (i < P2_STORE_INDEX) {
+                pitsAndStores[i] = new Circle(Vector3.at(x + (P2_STORE_INDEX-i-1)*pitSize + (P2_STORE_INDEX-i-1)* MARGIN, y - pitSize/2.0 - MARGIN /2.0), pitSize, pitSize);
+            } else if (i == P2_STORE_INDEX) {
+                pitsAndStores[i] = new Circle(Vector3.at(x - pitSize - MARGIN, y), pitSize, pitSize * 2 + MARGIN * 2);
+            }
+
+            pitsAndStores[i] = pitsAndStores[i].getStyledCircle(Style.builder().fill(boardStyle.getFill()).outline(boardStyle.getOutline()).build());
+        }
     }
 
     @Override
     public void onClick(float mouseX, float mouseY) {
-        for (int i = 0; i < 14; i++) {
-            if (pitsAndStores[i].contains(mouseX, mouseY)) {
-                pitClicked(i);
+        if (gameState.getCurrentPlayer().canInteract()) {
+            for (int i = 0; i < 14; i++) {
+                if (pitsAndStores[i].contains(mouseX, mouseY)) {
+                    selectPit(i);
+                    logger.log(Level.INFO, "Pit index: " + i);
+                    break;
+                }
             }
         }
     }

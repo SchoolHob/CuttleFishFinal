@@ -29,6 +29,7 @@ public class StyledCircle extends Circle {
     public void setStyle(Style style) {
         this.style = style;
     }
+    public Style getStyle() { return style; }
 
     @Override
     public void draw(Graphics g) {

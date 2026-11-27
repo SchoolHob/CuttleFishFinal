@@ -49,6 +49,21 @@ public class Style {
             return this;
         }
 
+        public StyleBuilder noOutline(){
+            this.outline = fill;
+            return this;
+        }
+
+        public StyleBuilder darkOutline(){
+            this.outline = fill.darker();
+            return this;
+        }
+
+        public StyleBuilder brightOutline(){
+            this.outline = fill.brighter();
+            return this;
+        }
+
         public Style build() {
             return new Style(fill, outline);
         }

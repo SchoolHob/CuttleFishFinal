@@ -9,7 +9,7 @@ import vector.Vector3;
 import javax.swing.*;
 import java.awt.*;
 
-public class Mancala implements IGame {
+public class Mancala implements IGame, IMancala {
     private static final Style mancalaStyle = Style.builder()
             .fill(new Color(25, 40, 35))
             .outline(new Color(48, 91, 41)).build();
@@ -18,25 +18,47 @@ public class Mancala implements IGame {
     private final GamePanel gamePanel = new GamePanel(600, 600, mancalaStyle);
 
 
-    Triangle triangle;
-
-    MancalaBoard board; // Step defs for this
-    //Player player1, player2;
-    int player1Score;
-    int player2Score;
-
-    boolean playersTurn;
+    private MancalaBoard board; // Step defs for this
+    private Player player1, player2;
+    private boolean isPlayerOneTurn;
 
     public Mancala() {
-        board = new MancalaBoard(Vector3.at(130, 200), 60, GridStyle.builder()
+        board = new MancalaBoard(this, Vector3.at(130, 200), 60, GridStyle.builder()
                 .fill(new Color(82, 55, 41))
                 .secondaryFill(new Color(119, 70, 43))
                 .outline(new Color(58, 18, 23))
                 .build());
 
-
         populateBoard(board);
-        gamePanel.include(board);
+
+        player1 = new Player("John", Style.builder()
+                .fill(new Color(82, 155, 41))
+                .brightOutline().build());
+        player2 = new Player("Mike", Style.builder()
+                .fill(new Color(152, 65, 131))
+                .brightOutline()
+                .build());
+
+        player1.setIconPosition(Vector3.at(10, 10));
+        player2.setIconPosition(Vector3.at(25, 10));
+
+        isPlayerOneTurn = true;
+        player1.setFocus(isPlayerOneTurn);
+        player2.setFocus(!isPlayerOneTurn);
+
+        gamePanel.include(board, player1, player2);
+    }
+
+    private void populateBoard(MancalaBoard board) {
+        for (int i = 0; i <= board.P2_STORE_INDEX; i++) {
+            if (i == board.P1_STORE_INDEX || i == board.P2_STORE_INDEX) {
+                continue;
+            }
+
+            for (int j = 0; j < 4; j++) {
+                board.placePiece(makeRandomMarble(), i);
+            }
+        }
     }
 
     private Piece makeRandomMarble() {
@@ -64,18 +86,6 @@ public class Mancala implements IGame {
                 .build());
     }
 
-    private void populateBoard(MancalaBoard board) {
-        for (int i = 0; i <= board.P2_STORE_INDEX; i++) {
-            if (i == board.P1_STORE_INDEX || i == board.P2_STORE_INDEX) {
-                continue;
-            }
-
-            for (int j = 0; j < 4; j++) {
-                board.placePiece(makeRandomMarble(), i);
-            }
-        }
-    }
-
 
     public JPanel getJPanel() {
         return gamePanel;
@@ -86,5 +96,35 @@ public class Mancala implements IGame {
         i++;
     }
 
+    @Override
+    public void nextTurn() {
+        isPlayerOneTurn = !isPlayerOneTurn;
+
+        if (isPlayerOneTurn) {
+            player2.endTurn();
+            player1.startTurn();
+        } else {
+            player1.endTurn();
+            player2.startTurn();
+        }
+
+        player1.setFocus(isPlayerOneTurn);
+        player2.setFocus(!isPlayerOneTurn);
+    }
+
+    @Override
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    @Override
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    @Override
+    public Player getCurrentPlayer() {
+        return isPlayerOneTurn ? player1 : player2;
+    }
 }
 
