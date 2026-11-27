@@ -1,7 +1,6 @@
 package game;
 
 import Styles.GridStyle;
-import Styles.Style;
 import input.Clickable;
 import input.MouseHandler;
 import primitive.Drawable;
@@ -12,35 +11,35 @@ import vector.Vector3;
 
 import java.awt.*;
 
-public class Board implements Drawable, Clickable {
-    private static final IntVector2 DEFAULT_ROWS_COLS = new IntVector2(8, 8);
-    private Vector3 position;
-    private int size;
-    private int rows, cols;
-    private Grid grid;
-    private Piece[][] pieces;
-    private Piece pieceInHand;
-    private IntVector2 pieceInHandPos;
+public abstract class GridBoard implements Drawable, Clickable {
+    protected static final IntVector2 DEFAULT_ROWS_COLS = new IntVector2(8, 8);
+    protected Vector3 position;
+    protected int size;
+    protected int rows, cols;
+    protected Grid grid;
+    protected Piece[][] pieces;
+    protected Piece pieceInHand;
+    protected IntVector2 pieceInHandPos;
 
 
-    public Board(int rows, int cols, Vector3 position, int size, GridStyle gridStyle) {
+    public GridBoard(int rows, int cols, Vector3 position, int size, GridStyle gridStyle) {
         this.position = position;
         this.size = size;
         this.rows = rows;
         this.cols = cols;
 
-        grid = new Grid(rows, rows, size, position);
+        grid = new Grid(rows, cols, size, position);
         grid.setStyle(gridStyle);
         reset();
 
         MouseHandler.getInstance().addClickable(this);
     }
 
-    public Board(Vector3 position, int size, GridStyle gridStyle) {
+    public GridBoard(Vector3 position, int size, GridStyle gridStyle) {
         this(DEFAULT_ROWS_COLS.x, DEFAULT_ROWS_COLS.y, position, size, gridStyle);
     }
 
-    public Board(Vector3 position, int size) {
+    public GridBoard(Vector3 position, int size) {
         this(position, size, GridStyle.builder().build());
     }
 
@@ -98,30 +97,42 @@ public class Board implements Drawable, Clickable {
         pieceInHand = placePiece(pieceInHand, x, y);
         pieceInHandPos = new IntVector2(x, y);
     }
+//
+//    public void onClick(float mouseX, float mouseY) {
+//        int x = (int) ((mouseX - position.x) / size);
+//        int y = (int) ((mouseY - position.y) / size);
+//
+//        if (x < 0 || x >= cols || y < 0 || y >= rows) {
+//            return;
+//        }
+//
+//        if (pieceInHand != null) { // Piece IS in hand
+//            if (pieceInHand.canMove(pieceInHandPos.x - x, pieceInHandPos.y - y)
+//                    && pieces[x][y] == null) { // This means pieces can not move onto other pieces (only onto empty squares), this will need to be changed for capturing
+//                placePieceWithHand(x, y);
+//            } else {
+//                placePiece(pieceInHand, pieceInHandPos.x, pieceInHandPos.y);
+//                pieceInHand = null;
+//            }
+//        } else if (pieces[x][y] != null) {
+//            pickUpPiece(x, y);
+//
+//        }
 
-    public void onClick(float mouseX, float mouseY) {
-        int x = (int) ((mouseX - position.x) / size);
-        int y = (int) ((mouseY - position.y) / size);
+//    }
+
+    public void onClick(float mouseX, float mouseY){
+        int x = (int) Math.floor((mouseX - position.x) / size);
+        int y = (int) Math.floor((mouseY - position.y) / size);
 
         if (x < 0 || x >= cols || y < 0 || y >= rows) {
             return;
         }
 
-        if (pieceInHand != null) { // Piece IS in hand
-            if (pieceInHand.canMove(pieceInHandPos.x - x, pieceInHandPos.y - y)
-                    && pieces[x][y] == null) { // This means pieces can not move onto other pieces (only onto empty squares), this will need to be changed for capturing
-                placePieceWithHand(x, y);
-            } else {
-                placePiece(pieceInHand, pieceInHandPos.x, pieceInHandPos.y);
-                pieceInHand = null;
-            }
-        } else if (pieces[x][y] != null) {
-            pickUpPiece(x, y);
-
-        }
-
+        onTileClicked(x, y);
     }
 
+    protected abstract void onTileClicked(int x, int y);
 
 
 }
