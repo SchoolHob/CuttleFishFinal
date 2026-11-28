@@ -1,4 +1,4 @@
-package game;
+package apps;
 
 import vector.IntVector2;
 

@@ -1,7 +1,7 @@
 
 
-import apps.*;
-import game.Launcher;
+import apps.checkers.Checkers;
+import apps.Launcher;
 
 import java.util.logging.Logger;
 
@@ -14,6 +14,6 @@ public class Main {
                 "[%4$s] %5$s%n"
         );
 
-        Launcher.launchGame(new Mancala());
+        Launcher.launchGame(new Checkers());
     }
 }

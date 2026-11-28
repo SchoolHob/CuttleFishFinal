@@ -1,7 +1,7 @@
-package apps;
+package apps.playerSettings;
 
 import game.GamePanel;
-import game.IApp;
+import apps.IApp;
 
 import javax.swing.*;
 

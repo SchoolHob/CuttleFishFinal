@@ -1,7 +1,8 @@
-package apps;
+package apps.mancala;
 
 import Styles.GridStyle;
 import Styles.Style;
+import apps.IApp;
 import game.*;
 import vector.Vector3;
 

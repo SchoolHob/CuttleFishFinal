@@ -1,9 +1,9 @@
 package mancala;
 
-import apps.Mancala;
+import apps.mancala.Mancala;
 import game.Board;
-import game.IApp;
-import game.Launcher;
+import apps.IApp;
+import apps.Launcher;
 import input.Clickable;
 import org.junit.jupiter.api.Test;
 import primitive.Drawable;

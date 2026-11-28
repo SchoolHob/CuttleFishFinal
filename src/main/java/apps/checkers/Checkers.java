@@ -1,10 +1,9 @@
-package apps;
+package apps.checkers;
 
 import Styles.GridStyle;
 import Styles.Style;
-import game.Board;
 import game.GamePanel;
-import game.IApp;
+import apps.IApp;
 import game.Piece;
 import primitive.Text;
 import vector.Vector2;

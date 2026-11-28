@@ -1,7 +1,9 @@
-package game;
+package apps.mancala;
 
 import Styles.GridStyle;
 import Styles.Style;
+import game.IGame;
+import game.Piece;
 import input.Clickable;
 import input.MouseHandler;
 import primitive.Circle;
