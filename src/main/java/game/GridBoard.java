@@ -17,8 +17,8 @@ public abstract class GridBoard implements Drawable, Clickable {
     protected int size;
     protected int rows, cols;
     protected Grid grid;
-    protected Piece[][] pieces;
-    protected Piece pieceInHand;
+    protected OwnedPiece[][] pieces;
+    protected OwnedPiece pieceInHand;
     protected IntVector2 pieceInHandPos;
 
 
@@ -44,7 +44,7 @@ public abstract class GridBoard implements Drawable, Clickable {
     }
 
     public void reset() {
-        pieces = new Piece[rows][cols];
+        pieces = new OwnedPiece[rows][cols];
         pieceInHand = null;
     }
 
@@ -73,17 +73,17 @@ public abstract class GridBoard implements Drawable, Clickable {
         // ^^^ Grid already draws this ^^^
     }
 
-    public Piece placePiece(Piece newPiece, int x, int y) {
-        Piece potentialReplacedPiece = getPiece(x, y);
+    public OwnedPiece placePiece(OwnedPiece newPiece, int x, int y) {
+        OwnedPiece potentialReplacedPiece = getPiece(x, y);
         pieces[x][y] = newPiece; // overwrite piece
         return potentialReplacedPiece;
     }
 
-    public Piece getPiece(int x, int y) {
+    public OwnedPiece getPiece(int x, int y) {
         return pieces[x][y];
     }
-    public Piece removePiece(int x, int y) {
-        Piece piece = getPiece(x, y);
+    public OwnedPiece removePiece(int x, int y) {
+        OwnedPiece piece = getPiece(x, y);
         pieces[x][y] = null;
         return piece;
     }

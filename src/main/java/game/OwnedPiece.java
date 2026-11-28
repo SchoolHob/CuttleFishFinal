@@ -8,6 +8,7 @@ public class OwnedPiece extends Piece{
 
     public OwnedPiece(int size, Style style, Player owner) {
         super(size, style);
+        this.owner = owner;
     }
 
     public OwnedPiece(int size, Player owner){
